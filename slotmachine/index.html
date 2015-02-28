@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+	<head>	
+		<title>slot machine</title>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				for(var i=0;i<15;i++){
+					$('.slider').append($("<div class='slot'>").append($("<div class='img'>").css({
+						background : "url(p/"+i+".png)",
+						backgroundSize : 'cover'
+					})));
+				}
+			});
+			var current = false;
+			var shuffling = false
+			var margin = 0;
+			function shuffle(){
+				shuffling = true;
+				var slider = $('.slider');
+				var height = $(window).height();
+				var limit = height*14;
+				var ani = setInterval(function(){
+					margin = (margin-150)%limit;
+					slider.css({marginTop : margin});
+				}, 50);
+				setTimeout(function(){
+					clearInterval(ani);
+					var target = margin-(margin%-height)-height;
+					$('.slider').animate({
+						marginTop : margin-(margin%-height)-height
+					}, {
+						duration : 100,
+						complete : function(){
+							margin = target;
+							var oindex = -(margin/height);
+							current = $('.slot')[oindex];
+							openVid(current, oindex, function(){
+								shuffling = false;
+							});
+						}
+					});
+				}, Math.floor(Math.random()*5000));
+			}
+			function openVid(sel, index, callback){
+				var vid = $('<video class="vid" src="v/'+index+'.mp4" loop><source type="video/mp4"></video>');
+				$(sel).prepend(vid);
+				vid.get(0).play();
+				vid.on('playing', function(){
+					vid.off('playing');
+					$(sel).find('.img').animate({
+						marginLeft : -$(window).width()
+					},{
+						complete : callback
+					});
+				});
+			}
+			function closeVid(sel, callback){
+				$(sel).find('.img').animate({
+					marginLeft : 0
+				}, {
+					complete : function(){
+						$(sel).find('.vid').remove();
+						if(callback) callback();
+					}
+				});
+			}
+			$(window).keypress(function(){
+				if(shuffling) return false;
+				if(current) closeVid(current, shuffle);
+				else shuffle();
+			}).on('load resize', function(){
+				$('.slot').height($(window).height());
+			});
+		</script>
+		<style type="text/css">
+			body{
+				margin:0;
+				background:black;
+			}
+			.wrapper{
+				transform-origin:0 0;
+				position:absolute;
+				width:100%;
+				height:100%;
+				overflow:hidden;
+			}
+				.slider{
+					width:100%;
+					height:auto;
+				}
+				.slot{
+					width:100%;
+					height:100%;
+					overflow:hidden;
+				}	
+					.img, .vid{
+						position:absolute;
+						width:100%;
+						height:100%;
+					}
+		</style>
+	</head>
+	<body>
+		<div class='wrapper'>
+			<div class='slider'>
+			</div>
+		</div>
+	</body>
+</html>

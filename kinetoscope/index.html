@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+	<head>	
+		<title>kinetoscope</title>
+		<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+		<style type="text/css">
+			.unselectable{
+	            -moz-user-select:none;
+	            -webkit-user-select:none;
+	            user-select:none;
+	        }
+			body{
+				padding:0px;
+				margin:0px;
+				font-family:"Montserrat", Arial;
+				overflow:hidden;
+				background:black;
+			}
+			div{
+				box-sizing:border-box;
+			}
+			#v{
+				position:absolute;
+				width:100%;
+				height:100%;
+			}
+			#coverall{
+				position:absolute;
+				top:0;
+				left:0;
+				right:0;
+				bottom:0;
+				background:url('bg.JPG') no-repeat;
+				background-size:cover;
+			}
+			#l{
+				display:none;
+			}
+		</style>
+		<script type="text/javascript" src="lib.js"></script>
+		<script type="text/javascript">
+			var sp = [["P 1-6 MICHE", "P1 Diet coke globe", "P1 Diet Coke Spoon", "P1 Horn", "P1 Jadd and Feathers", "P1 Jadd Terrorist 2", "P1 Jadd Terrorist 2", "P1 Jadd Terrorist", "P1 Jadd Underwear", "P1 Jadd", "P1 Lung", "P1 Miche and Jadd Short", "P1 tree", "P1 Zoe Face", "P1 Zoe"],
+			["P2 diet coke hair nests", "P2 diet Coke lung", "P2 horn", "P2 Jadd and Zoe", "P2 Jadd Shuffle", "P2 Jadd Terrorist 2", "P2 Jadd Zoe Cooking REAL", "P2 Lung", "P2 miche and Jadd", "P2 Sonya", "P2 Spoon", "P2 Trees"],
+			["P3 Concealer", "P3 Diet coke arm", "P3 Fishfeather", "P3 Horn", "P3 Jadd and Sonya", "p3 Jadd", "P3 lick", "P3 Lung", "P3 miche", "P3 zoe and Jadd", "P3 Zoe Tree", "P3 Zoe Yes"],
+			["P4 diet coke listening", "P4 Everyone coming in", "P4 hand", "P4 Horn", "P4 Jadd", "P4 Lung", "P4 Miche and Zoe Pee", "P4 miche hand", "P4 Pankcake 1", "P4 Sonya", "P4 Zoe Hand"],
+			["P5 Concealer", "P5 Diet coke baby", "P5 Drill fish", "P5 Jadd", "P5 Lung", "P5 Pancake 2", "P5 Salt", "P5 Sonya", "P5 Spit in head", "P5 Spoon", "P5 Zoe"], 
+			["P1-6 Looking at camera", "P6 Diet coke fountain", "P6 Horn", "P6 Jadd", "P6 lick", "P6 Lung", "P6 Miche Jadd", "P6 Paint belly", "P6 RICHARD SERRA", "P6 Spoon Diet coke 2", "P6 Swing", "P6 Zoe Jadd Sonya", "P6 Zoe Shoes Pee", "P6 Zoe"]];
+			var s = [];
+			var next = "";
+			function sync(){
+				s = [[], [], [], [], [], []];
+				for(var i in sp) for(var j in sp[i]) s[i].push(sp[i][j]);
+			}
+			function start(r, i){
+				$("#coverall").css("background", "white");
+				log(i);
+				$("#v").style.display = "block";
+				next = "v/"+i+"/"+s[i][r]+".mp4";
+				$("#l").src = next;
+				s[i].splice(r, 1); 
+				$("#v").play();
+			}
+			sync();
+			window.onload=function(){
+				var it = 0;
+				next = "v/"+it+"/"+s[it][Math.floor(Math.random()*s[it].length)]+".mp4";
+				//$("#v").src = next;
+				$("body").event("keydown", function(e){
+					if(e.code == 32 || e.code == 78){
+						var i = ++it%6;
+						if(s[i].length == 0) sync();
+						var r = Math.floor(Math.random()*s[i].length);
+						$("#v").style.display = "none";
+						$("#v").src = next;
+						var loaded = false;
+						$("#v").event("loadeddata", function(){loaded = true})
+						setTimeout(function(){
+							if(loaded) start(r, i);
+							else $("#v").event("loadeddata", function(){
+								start(r, i);
+							});
+						}, 66);
+					}
+				});
+				
+			}
+		</script>
+	</head>
+	<body>
+		<div id="coverall"></div>
+		<video id="v"><source src="" type="video/mp4"></video>
+		<video id="l"><source src="" type="video/mp4"></video>
+	</body>
+</html>
