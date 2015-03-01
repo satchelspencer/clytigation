@@ -43,7 +43,7 @@
 				}, Math.floor(Math.random()*5000));
 			}
 			function openVid(sel, index, callback){
-				var vid = $('<video class="vid" src="v/'+index+'.mp4" loop><source type="video/mp4"></video>');
+				var vid = $('<video class="vid" src="v/'+index+'.mp4"><source type="video/mp4"></video>');
 				$(sel).prepend(vid);
 				vid.get(0).play();
 				vid.on('playing', function(){
@@ -53,6 +53,8 @@
 					},{
 						complete : callback
 					});
+				}).on('ended', function(){
+					closeVid(sel);
 				});
 			}
 			function closeVid(sel, callback){
