@@ -3,14 +3,16 @@
 	<head>	
 		<title>slot machine</title>
 		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../mapper.js"></script>
 		<script type="text/javascript">
 			$(function(){
-				for(var i=0;i<15;i++){
+				for(var i=0;i<28;i++){
 					$('.slider').append($("<div class='slot'>").append($("<div class='img'>").css({
 						background : "url(p/"+i+".png)",
 						backgroundSize : 'cover'
 					})));
 				}
+				$('.wrapper').projectionMapGui();
 			});
 			var current = false;
 			var shuffling = false
@@ -19,9 +21,9 @@
 				shuffling = true;
 				var slider = $('.slider');
 				var height = $(window).height();
-				var limit = height*14;
+				var limit = height*27;
 				var ani = setInterval(function(){
-					margin = (margin-150)%limit;
+					margin = (margin-100)%limit;
 					slider.css({marginTop : margin});
 				}, 50);
 				setTimeout(function(){
@@ -51,6 +53,7 @@
 					$(sel).find('.img').animate({
 						marginLeft : -$(window).width()
 					},{
+						duration : 1500,
 						complete : callback
 					});
 				}).on('ended', function(){
@@ -61,13 +64,15 @@
 				$(sel).find('.img').animate({
 					marginLeft : 0
 				}, {
+					duration : 1500,
 					complete : function(){
 						$(sel).find('.vid').remove();
 						if(callback) callback();
+						current = false;
 					}
 				});
 			}
-			$(window).keypress(function(){
+			$(window).keydown(function(){
 				if(shuffling) return false;
 				if(current) closeVid(current, shuffle);
 				else shuffle();
@@ -79,6 +84,7 @@
 			body{
 				margin:0;
 				background:black;
+				overflow:hidden;
 			}
 			.wrapper{
 				transform-origin:0 0;

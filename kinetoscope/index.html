@@ -3,6 +3,12 @@
 	<head>	
 		<title>kinetoscope</title>
 		<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
+		<script type="text/javascript" src="../mapper.js"></script>
+		<script type="text/javascript">
+			$.noConflict();
+		</script>
 		<style type="text/css">
 			.unselectable{
 	            -moz-user-select:none;
@@ -16,15 +22,24 @@
 				overflow:hidden;
 				background:black;
 			}
+			.wrapper{
+				transform-origin:0 0;
+				position:absolute;
+				width:100%;				
+			}
 			div{
 				box-sizing:border-box;
 			}
 			#v{
 				position:absolute;
-				width:100%;
-				height:100%;
+				width:102%;
+				height:102%;
+				top:-1%;
+				left:-1%;
+				background:black;
 			}
 			#coverall{
+				z-index: 1;
 				position:absolute;
 				top:0;
 				left:0;
@@ -36,9 +51,30 @@
 			#l{
 				display:none;
 			}
+			#marquee{
+				position:absolute;
+				margin-left:30px;
+				transform: rotate(90deg);
+				transform-origin: left top 0;
+				height: 25px;
+				width:56.25%;
+				text-align: right;
+				z-index: 1;
+				color: white;
+				overflow: hidden;
+				white-space: nowrap;
+				direction: rtl;
+				  font-size: 20px;
+			}
 		</style>
 		<script type="text/javascript" src="lib.js"></script>
 		<script type="text/javascript">
+			var socket = io.connect('http://54.148.36.92/');
+			socket.on('char', function(char){
+				console.log(char);
+				jQuery('#marquee').append(char);
+			});
+			
 			var sp = [["P 1-6 MICHE", "P1 Diet coke globe", "P1 Diet Coke Spoon", "P1 Horn", "P1 Jadd and Feathers", "P1 Jadd Terrorist 2", "P1 Jadd Terrorist 2", "P1 Jadd Terrorist", "P1 Jadd Underwear", "P1 Jadd", "P1 Lung", "P1 Miche and Jadd Short", "P1 tree", "P1 Zoe Face", "P1 Zoe"],
 			["P2 diet coke hair nests", "P2 diet Coke lung", "P2 horn", "P2 Jadd and Zoe", "P2 Jadd Shuffle", "P2 Jadd Terrorist 2", "P2 Jadd Zoe Cooking REAL", "P2 Lung", "P2 miche and Jadd", "P2 Sonya", "P2 Spoon", "P2 Trees"],
 			["P3 Concealer", "P3 Diet coke arm", "P3 Fishfeather", "P3 Horn", "P3 Jadd and Sonya", "p3 Jadd", "P3 lick", "P3 Lung", "P3 miche", "P3 zoe and Jadd", "P3 Zoe Tree", "P3 Zoe Yes"],
@@ -52,7 +88,7 @@
 				for(var i in sp) for(var j in sp[i]) s[i].push(sp[i][j]);
 			}
 			function start(r, i){
-				$("#coverall").css("background", "white");
+				$("#coverall").css("opacity", "0");
 				log(i);
 				$("#v").style.display = "block";
 				next = "v/"+i+"/"+s[i][r]+".mp4";
@@ -84,11 +120,19 @@
 				});
 				
 			}
+			jQuery(window).on('load resize', function(){
+				var h = jQuery(window).width()*(9/16);
+				jQuery('.wrapper').height(h);
+				jQuery('.wrapper').projectionMapGui();
+			})
 		</script>
 	</head>
 	<body>
-		<div id="coverall"></div>
-		<video id="v"><source src="" type="video/mp4"></video>
-		<video id="l"><source src="" type="video/mp4"></video>
+		<div class="wrapper">
+			<div id="coverall"></div>
+			<video id="v"><source src="" type="video/mp4"></video>
+			<video id="l"><source src="" type="video/mp4"></video>
+			<div id='marquee'></div>
+		</div>
 	</body>
 </html>
