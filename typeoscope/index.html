@@ -18,10 +18,13 @@
 					play('.top');
 				}else{
 					currentVid = src;
-					$('.bottom').attr('src', src);
-					play('.bottom', function(){
-						$('.top').get(0).pause();
-						$('.vid').toggleClass('top bottom');
+					$('.bottom').attr('src', src).on('loadedmetadata', function(){
+						$('.bottom').off('loadedmetadata');
+						$('.bottom').get(0).currentTime = Math.floor(Math.random()*$('.bottom').get(0).duration);
+						play('.bottom', function(){
+							$('.top').get(0).pause();
+							$('.vid').toggleClass('top bottom');
+						});
 					});
 				}
 			}
@@ -34,43 +37,27 @@
 						$('.grass').fadeOut();
 					}, 50);
 					$(sel).off('playing');
-					if(callback) callback();
 					clearTimeout(timeout);
 					timeout = setTimeout(function(){
 						el.pause();
 					}, 500);
+					if(callback) callback();
 				});
 			}
+			var seen = [];
 			function getSrc(){
-				return 'v/'+Math.floor(Math.random()*27)+'.mp4';
+				var src = 'v/'+(Math.floor(Math.random()*27))+'.mp4';
+				if(seen.length >= 26) seen = [];
+				else if(seen.indexOf(src) != -1) src = getSrc();
+				seen.push(src);
+				return src;
 			}
 			var playing = getSrc();
 			var resetTimeout = false;
 			$(function(){
-				$(document).unbind('keydown').bind('keydown', function (event) {
-				    var doPrevent = false;
-				    if (event.keyCode === 8) {
-				        var d = event.srcElement || event.target;
-				        if ((d.tagName.toUpperCase() === 'INPUT' && 
-				             (
-				                 d.type.toUpperCase() === 'TEXT' ||
-				                 d.type.toUpperCase() === 'PASSWORD' || 
-				                 d.type.toUpperCase() === 'FILE' || 
-				                 d.type.toUpperCase() === 'EMAIL' || 
-				                 d.type.toUpperCase() === 'SEARCH' || 
-				                 d.type.toUpperCase() === 'DATE' )
-				             ) || 
-				             d.tagName.toUpperCase() === 'TEXTAREA') {
-				            doPrevent = d.readOnly || d.disabled;
-				        }
-				        else {
-				            doPrevent = true;
-				        }
-				    }
-				
-				    if (doPrevent) {
-				        event.preventDefault();
-				    }
+				$(document).on('keydown',function(e){
+				  var $target = $(e.target||e.srcElement);
+				  if(e.keyCode == 8 && !$target.is('input,[contenteditable="true"],textarea')) e.preventDefault();
 				});
 				$(window).keyup(function(e){
 					var char = String.fromCharCode(e.which).toLowerCase();
@@ -114,6 +101,7 @@
 				.vid{
 					position:absolute;
 					width:100%;
+					-webkit-filter:grayscale(100%);
 				}
 				.top{
 					z-index:1;
