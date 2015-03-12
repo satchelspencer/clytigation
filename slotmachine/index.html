@@ -6,7 +6,7 @@
 		<script type="text/javascript" src="../mapper.js"></script>
 		<script type="text/javascript">
 			$(function(){
-				for(var i=0;i<28;i++){
+				for(var i=0;i<=27;i++){
 					$('.slider').append($("<div class='slot'>").append($("<div class='img'>").css({
 						background : "url(p/"+i+".png)",
 						backgroundSize : 'cover'
@@ -30,7 +30,7 @@
 					clearInterval(ani);
 					var target = margin-(margin%-height)-height;
 					$('.slider').animate({
-						marginTop : margin-(margin%-height)-height
+						marginTop : target
 					}, {
 						duration : 100,
 						complete : function(){
@@ -44,8 +44,16 @@
 					});
 				}, Math.floor(Math.random()*5000));
 			}
+			var seen = [];
+			function getNewVid(){
+				if(seen.length >= 27) seen = [];
+				var possible = Math.floor(Math.random()*27);
+				if(seen.indexOf(possible) != -1) possible = getNewVid();
+				else seen.push(possible);
+				return possible;
+			}
 			function openVid(sel, index, callback){
-				var vid = $('<video class="vid" src="v/'+index+'.mp4"><source type="video/mp4"></video>');
+				var vid = $('<video class="vid" src="v/'+getNewVid()+'.mp4"><source type="video/mp4"></video>');
 				$(sel).prepend(vid);
 				vid.get(0).play();
 				vid.on('playing', function(){

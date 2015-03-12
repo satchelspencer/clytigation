@@ -46,8 +46,8 @@
 			}
 			var seen = [];
 			function getSrc(){
-				var src = 'v/'+(Math.floor(Math.random()*27))+'.mp4';
-				if(seen.length >= 26) seen = [];
+				var src = 'v/'+(Math.floor(Math.random()*24))+'.mp4';
+				if(seen.length >= 23) seen = [];
 				else if(seen.indexOf(src) != -1) src = getSrc();
 				seen.push(src);
 				return src;
@@ -101,7 +101,6 @@
 				.vid{
 					position:absolute;
 					width:100%;
-					-webkit-filter:grayscale(100%);
 				}
 				.top{
 					z-index:1;
