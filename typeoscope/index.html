@@ -12,6 +12,7 @@
 			var dictionary = trie(dict);
 			var input = "";
 			var timeout = false;
+			var ltimeout = false;
 			var currentVid = false;
 			function show(src){
 				if(src == currentVid){
@@ -41,6 +42,10 @@
 					timeout = setTimeout(function(){
 						el.pause();
 					}, 500);
+					clearTimeout(ltimeout);
+					ltimeout = setTimeout(function(){
+						input += ' ';
+					}, 5000);
 					if(callback) callback();
 				});
 			}
@@ -61,13 +66,13 @@
 				});
 				$(window).keyup(function(e){
 					var char = String.fromCharCode(e.which).toLowerCase();
-					if(e.which == 190) endPhrase();
+					if(e.which == 190 || e.which == 191) endPhrase();
 					else if(char.match(/([a-z]|[0-9]|\s)/i)){
 						socket.emit('char', char);
 						input += char;
 						var words = input.split(' ');
 						var last = words[words.length-1];
-						if(dictionary.get(last)){
+						if(dictionary.get(last) && last != words[words.length-2]){
 							clearTimeout(resetTimeout);
 							resetTimeout = false;
 							show(playing);
